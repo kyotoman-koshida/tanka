@@ -1,0 +1,5 @@
+outs:
+- md5: 36504f87d4e91b31cc6828e598585069
+  size: 2393231072
+  hash: md5
+  path: Phi-3-mini-4k-instruct-q4.gguf
