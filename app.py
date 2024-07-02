@@ -26,7 +26,7 @@ with st.form(key = "Letter Form", clear_on_submit = False):
     sub = st.form_submit_button("一首詠む")
 
 if sub:
-    json_open = open("../config/settings.jsonc", 'r')
+    json_open = open("config/settings.jsonc", 'r')
     settings = json.load(json_open)
     tanka_generater = TankaGenerater(settings["model_path"])
     #LLMによる推論を実行。
