@@ -39,4 +39,7 @@ class TankaGenerater:
         echo=True,
         )
 
-        return output['choices'][0]['text']
+        # LLMの出力から、生成した短歌の部分だけを抽出する。
+        generated_text = output['choices'][0]['text'].split("<|assistant|>")[-1]
+
+        return generated_text
