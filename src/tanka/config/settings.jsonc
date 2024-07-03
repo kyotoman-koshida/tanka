@@ -1,0 +1,4 @@
+{
+    "model_path":"../tanka/models/Phi-3-mini-4k-instruct-q4.gguf",
+    "prompt":"以下に短歌に読み込みたい情景を提示しますので、それを踏まえて短歌を一首読んでください。"
+}
