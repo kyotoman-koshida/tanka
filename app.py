@@ -28,7 +28,7 @@ with st.form(key = "Letter Form", clear_on_submit = False):
 if sub:
     json_open = open("config/settings.jsonc", 'r')
     settings = json.load(json_open)
-    tanka_generater = TankaGenerater(settings["model_path"])
+    tanka_generater = TankaGenerater(settings["model_path"],settings["prompt"])
     #LLMによる推論を実行。
     with st.spinner(text = "generating..."):
         text  = tanka_generater.generate_tanka(scene_text=ret)

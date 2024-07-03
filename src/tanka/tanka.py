@@ -4,9 +4,11 @@ from llama_cpp import Llama
 class TankaGenerater:
     """ 短歌を作ってくれるクラス """
     
-    def __init__(self, model_path, n_gpu_layers=0):
+    def __init__(self, model_path, prompt, n_gpu_layers=0):
         self.model_path: str = model_path
         """LLMモデルへのパス"""
+        self.prompt:str = prompt
+        """LLMに渡すプロンプト"""
         self.n_gpu_layers: int = n_gpu_layers
         """オフロードするためのGPUの個数"""
 
@@ -22,7 +24,7 @@ class TankaGenerater:
         ----------
         str: 生成した短歌一首
         """
-        content = f"以下に短歌に読み込みたい情景を提示しますので、それを踏まえて短歌を一首読んでください。情景:{scene_text}"
+        content = self.prompt+f"情景:{scene_text}"
         prompt= [
             {"role": "system", "content": content}
         ]
