@@ -1,0 +1,5 @@
+outs:
+- md5: b87abdf90897a4a0c59fa39b897fe14a
+  size: 3930877184
+  hash: md5
+  path: ELYZA-japanese-Llama-2-7b-fast-instruct-q4_K_S.gguf
