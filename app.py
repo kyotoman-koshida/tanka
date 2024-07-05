@@ -1,6 +1,6 @@
-import json
 import streamlit as st
 from src.tanka.tanka import TankaGenerater
+from src.tanka.config.config import TankaConfig
 
 st.title("短歌ゴーストライター")
 st.write("")
@@ -26,9 +26,8 @@ with st.form(key = "Letter Form", clear_on_submit = False):
     sub = st.form_submit_button("一首詠む")
 
 if sub:
-    json_open = open("src/tanka/config/settings.jsonc", 'r')
-    settings = json.load(json_open)
-    tanka_generater = TankaGenerater(settings["model_path"],settings["prompt"])
+    tanka_config = TankaConfig()
+    tanka_generater = TankaGenerater(tanka_config.model_path,tanka_config.prompt)
     #LLMによる推論を実行。
     with st.spinner(text = "generating..."):
         text  = tanka_generater.generate_tanka(scene_text=ret)
