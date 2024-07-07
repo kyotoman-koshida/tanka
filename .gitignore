@@ -107,3 +107,6 @@ ENV/
 # IDE settings
 .vscode/
 .idea/
+
+# ローカルマシンのMacで勝手にできてしまうファイル
+.DS_Store
