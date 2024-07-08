@@ -29,7 +29,7 @@ if sub:
     tanka_config = TankaConfig()
     tanka_generater = TankaGenerater(tanka_config.model_path,tanka_config.prompt)
     #LLMによる推論を実行。
-    with st.spinner(text = "generating..."):
+    with st.spinner(text = "作歌アンド推敲中..."):
         text  = tanka_generater.generate_tanka(scene_text=ret)
         st.session_state["letter_body"] = text
         st.experimental_rerun()
