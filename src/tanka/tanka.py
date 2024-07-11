@@ -5,6 +5,7 @@ from llama_cpp import Llama
 from openai import OpenAI
 
 from src.tanka.config.config import TankaConfig, GCPConfig
+from utils.utils import extract_text_between_symbols
 
 class TankaGenerater:
     """ 短歌を作ってくれるクラス """
@@ -91,16 +92,23 @@ class TankaGenerater:
             n_gpu_layers=self.n_gpu_layers,
         )
 
-        output = llm(
-        f"<|user|>\n{prompt}<|end|>\n<|assistant|>",
-        max_tokens=512,
-        stop=["<|end|>"],
-        echo=True,
-        )
+        while True:
+            # 指定した形式の出力が出るまでは試行を繰り返す。
 
-        # LLMの出力から、生成した短歌の部分だけを抽出する。
-        generated_text = output['choices'][0]['text'].split("<|assistant|>")[-1]
+            output = llm(
+            f"<|user|>\n{prompt}<|end|>\n<|assistant|>",
+            max_tokens=512,
+            stop=["<|end|>"],
+            echo=True,
+            )
 
-        # TODO:LLMの出した文章が短歌の形式を満たさなかったときの処理を入れる。
+            # LLMの出力から、生成した短歌の部分だけを抽出する。
+            generated_text = output['choices'][0]['text'].split("<|assistant|>")[-1]
+            if generated_text.count(self.config.stop_symbol) < 2:
+                # generated_textの中に、短歌を囲むstop_symbolが2つない場合
+                continue
 
-        return generated_text
+            generated_text = extract_text_between_symbols(generated_text, self.config.stop_symbol)
+            return generated_text
+
+    
