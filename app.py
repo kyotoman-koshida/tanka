@@ -34,7 +34,8 @@ with st.form(key = "Letter Form", clear_on_submit = False):
     else:
         ret = st.text_input(
             label = "短歌に詠み込みたい情景を入力してください。",
-            value = ""
+            value = "",
+            max_chars=20
         )
         sub = st.form_submit_button("一首詠む")
 
