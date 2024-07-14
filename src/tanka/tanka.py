@@ -1,11 +1,10 @@
 """Main module."""
 import os
-from google.cloud import secretmanager
 from llama_cpp import Llama
 from openai import OpenAI
 
-from src.tanka.config.config import TankaConfig, GCPConfig
-from utils.utils import extract_text_between_symbols
+from src.tanka.config.config import TankaConfig
+from utils.utils import extract_text_between_symbols, get_secret_value_from_GCP
 
 class TankaGenerater:
     """ 短歌を作ってくれるクラス """
@@ -48,30 +47,32 @@ class TankaGenerater:
         content: str
             LLMに渡すプロンプト
         """
-        # Google CloudのSecret Managerで管理しているOpen AIの認証情報を取得する。
-        gcp_config = GCPConfig()
-        PROJECT_ID, SECRET_ID, VERSION = gcp_config.PROJECT_ID, gcp_config.SECRET_ID, gcp_config.VERSION
-
-        key_path = './src/tanka/config/secret.json'
-        client = secretmanager.SecretManagerServiceClient.from_service_account_json(key_path)
-        path = client.secret_version_path(PROJECT_ID, SECRET_ID, VERSION)
-        response = client.access_secret_version(name=path)
-        secret_value = response.payload.data.decode('UTF-8')
-
+        secret_value = get_secret_value_from_GCP()
         # ChatGPTのAPIから回答を得る。
         client = OpenAI(api_key=secret_value.split("=")[1])
-        stream = client.chat.completions.create(
-        model="gpt-3.5-turbo",
-        messages=[{"role": "user", "content": content}],
-        stream=True,
-        )
-        for chunk in stream:
-            if chunk.choices[0].delta.content is not None:
-                generated_text = chunk.choices[0].delta.content
-            else:
-                generated_text = self.config.excuse_message
+        generated_count = 0
+        generated_text = ""
+        while True:
+            stream = client.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=[{"role": "user", "content": content}],
+            stream=True,
+            )
+            for chunk in stream:
+                if chunk.choices[0].delta.content is not None:
+                    generated_text = chunk.choices[0].delta.content
 
-        return generated_text
+            if generated_text.count(self.config.stop_symbol) < 2:
+                # generated_textの中に、短歌を囲むstop_symbolが2つない場合
+                if generated_count >= 3:
+                    # 3回試してダメだったら諦める
+                    generated_text = self.config.excuse_message
+                    return generated_text
+                generated_count += 1
+                continue
+
+            generated_text = extract_text_between_symbols(generated_text, self.config.stop_symbol)
+            return generated_text
 
     def _use_llama_cpp(self, content: str, model_name: str) -> str:
         """llama_cppを使って、用意しているLLMモデルをCPUでも動かせるようにして短歌を詠ませる。
