@@ -60,7 +60,7 @@ class TankaGenerater:
             )
             for chunk in stream:
                 if chunk.choices[0].delta.content is not None:
-                    generated_text = chunk.choices[0].delta.content
+                    generated_text += chunk.choices[0].delta.content
 
             if generated_text.count(self.config.stop_symbol) < 2:
                 # generated_textの中に、短歌を囲むstop_symbolが2つない場合
