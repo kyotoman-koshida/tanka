@@ -1,6 +1,13 @@
 import streamlit as st
 from src.tanka.tanka import TankaGenerater
 from src.tanka.config.config import TankaConfig
+from PIL import Image
+
+image = Image.open("./static/image/扇子のアイコン.jpeg")
+st.set_page_config(
+    page_title="短歌ゴーストライター",
+    page_icon=image
+)
 
 st.title("短歌ゴーストライター")
 st.write("")
