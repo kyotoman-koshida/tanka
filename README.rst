@@ -17,6 +17,7 @@ tanka
 
 
 詠みたい情景を元に短歌を作ってくれる、短歌のゴーストライターです。
+サンプルの短歌のデータセットは「近代短歌データベース」(https://kindaitankadatabase.com/)を使用しました。
 
 
 * Free software: MIT license
