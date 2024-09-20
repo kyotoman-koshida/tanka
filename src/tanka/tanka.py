@@ -98,9 +98,10 @@ class TankaGenerater:
 
             output = llm(
             f"<|user|>\n{prompt}<|end|>\n<|assistant|>",
-            max_tokens=512,
+            max_tokens=64,
             stop=["<|end|>"],
             echo=True,
+            top_p=0.9
             )
 
             # LLMの出力から、生成した短歌の部分だけを抽出する。
