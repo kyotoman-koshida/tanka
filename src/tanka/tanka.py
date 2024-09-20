@@ -1,10 +1,11 @@
 """Main module."""
 import os
+from dotenv import load_dotenv
 from llama_cpp import Llama
 from openai import OpenAI
 
 from src.tanka.config.config import TankaConfig
-from utils.utils import extract_text_between_symbols, get_secret_value_from_GCP, count_mora
+from utils.utils import extract_text_between_symbols, count_mora
 
 class TankaGenerater:
     """ 短歌を作ってくれるクラス """
@@ -47,9 +48,14 @@ class TankaGenerater:
         content: str
             LLMに渡すプロンプト
         """
-        secret_value = get_secret_value_from_GCP()
+        if os.getenv("SPACES") is None:
+            load_dotenv()
+
+        # 環境変数からシークレットを取得
+        api_key = os.getenv("OPENAI_API_KEY")
+
         # ChatGPTのAPIから回答を得る。
-        client = OpenAI(api_key=secret_value.split("=")[1])
+        client = OpenAI(api_key=api_key)
         generated_count = 0
         generated_text = ""
         while True:
