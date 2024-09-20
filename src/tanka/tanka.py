@@ -4,7 +4,7 @@ from llama_cpp import Llama
 from openai import OpenAI
 
 from src.tanka.config.config import TankaConfig
-from utils.utils import extract_text_between_symbols, get_secret_value_from_GCP
+from utils.utils import extract_text_between_symbols, get_secret_value_from_GCP, count_mora
 
 class TankaGenerater:
     """ 短歌を作ってくれるクラス """
@@ -93,8 +93,10 @@ class TankaGenerater:
             n_gpu_layers=self.n_gpu_layers,
         )
 
-        while True:
+        for i in range(self.config.trial_count):
             # 指定した形式の出力が出るまでは試行を繰り返す。
+            if i >= self.config.trial_count - 1:
+                return self.config.excuse_message
 
             output = llm(
             f"<|user|>\n{prompt}<|end|>\n<|assistant|>",
@@ -108,6 +110,11 @@ class TankaGenerater:
             generated_text = output['choices'][0]['text'].split("<|assistant|>")[-1]
             if generated_text.count(self.config.stop_symbol) < 2:
                 # generated_textの中に、短歌を囲むstop_symbolが2つない場合
+                continue
+
+            mora_count = count_mora(generated_text)
+            if mora_count <= 29 or mora_count >= 33:
+                # 生成されたテキストのモーラ数が短歌の制約から大きく外れる場合は短歌を生成しなおす。
                 continue
 
             generated_text = extract_text_between_symbols(generated_text, self.config.stop_symbol)
